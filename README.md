@@ -1,15 +1,27 @@
 # stroke_study
 Lesion impact scoring (AAL + hub scores) and network-efficiency regression from DTI connectomes.
 
-# Lesion Impact Scoring & Network Regression (DeepISLES + ExploreDTI)
+# Lesion Impact Scoring & Network Analysis
 
-<sub><b>Purpose:</b> helper scripts to (1) generate ADC/DWI from DTI, (2) compute atlas + hub-weighted lesion impact scores, and (3) test their association with structural network metrics (global efficiency / betweenness).</sub>
+## Why this pipeline?
 
-> **This repo includes only 4 scripts.** You must set up and run **DeepISLES** (lesion segmentation) and **ExploreDTI** (connectivity matrices) separately.
-> 
-> ## External tools (not included in this repo)
+Stroke lesions can **disrupt the brain’s structural connectome**, i.e. the network of white-matter connections that supports distributed communication. In graph terms, damaging certain regions can reduce the brain’s capacity for efficient information transfer, especially when lesions affect **network hubs** (regions that lie on many shortest paths and act as critical bridges in the network). 
 
-You must install/run these tools separately to generate the intermediate files used by the scripts here:
+To capture this, we compute a **hub-weighted lesion impact score** by overlaying each lesion mask with the AAL atlas and, for each region, combining:
+- **how much of the region is affected** (overlap percentage)
+- **how important that region is in the healthy connectome** (hub-score derived from betweenness centrality)
+
+This approach follows the idea that small lesions in high-importance hubs can be more disruptive than larger lesions in peripheral regions. In line with Aben et al. (2019), higher lesion impact is expected to be associated with **lower global network efficiency** (a graph measure of whole-brain integration computed as the average inverse shortest-path length). 
+
+In the rehabilitation setting, one can additionally test whether **global efficiency changes pre/post training**, and whether baseline hub disruption helps explain inter-individual differences in network-level reorganization and recovery potential.
+
+**Reference:** Hugo P. Aben et al., *“Extent to Which Network Hubs Are Affected by Ischemic Stroke Predicts Cognitive Recovery”*, *Stroke* (2019). 
+
+**Purpose:** (1) generate ADC/DWI from DTI, (2) compute atlas + hub-weighted lesion impact scores, and (3) test their association with structural network metrics (global efficiency / betweenness).
+ 
+ ## External tools 
+**This repo includes only 4 scripts.** You must set up and run **DeepISLES** (lesion segmentation) and **ExploreDTI** (connectivity matrices) separately.
+You must install and run these tools separately to generate the intermediate files used by the scripts here:
 
 - **DeepISLES (lesion segmentation):** https://github.com/ezequieldlrosa/DeepIsles
 - **ExploreDTI (tractography + connectivity matrices):**
@@ -29,7 +41,7 @@ You must install/run these tools separately to generate the intermediate files u
 
 ---
 
-## Pipeline (high level)
+## Pipeline
 
 1. **DTI → ADC/DWI**  
    Use `get_adc_dwi.py` to create the diffusion-derived inputs needed by DeepISLES.
